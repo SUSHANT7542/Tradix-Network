@@ -1,0 +1,1110 @@
+<!DOCTYPE html>
+<html class="no-js" lang="zxx">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="x-ua-compatible" content="ie=edge" />
+    <title>Tradix Network-Create Innovate Grow</title>
+    <meta name="description" content="" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link
+      rel="shortcut icon"
+      type="image/x-icon"
+      href="assets/logo white.png "
+    />
+
+    <link rel="stylesheet" href="assets/css/bootstrap.css" />
+    <link rel="stylesheet" href="assets/css/style.css" />
+    <script>
+      (function() {
+    "use strict";
+
+    /**
+     * Easy selector helper function
+     */
+    const select = (el, all = false) => {
+        el = el.trim()
+        if (all) {
+            return [...document.querySelectorAll(el)]
+        } else {
+            return document.querySelector(el)
+        }
+    }
+
+    /**
+     * Easy event listener function
+     */
+    const on = (type, el, listener, all = false) => {
+        if (all) {
+            select(el, all).forEach(e => e.addEventListener(type, listener))
+        } else {
+            select(el, all).addEventListener(type, listener)
+        }
+    }
+
+    /**
+     * Easy on scroll event listener 
+     */
+    const onscroll = (el, listener) => {
+        el.addEventListener('scroll', listener)
+    }
+
+    /**
+     * Navbar links active state on scroll
+     */
+    let navbarlinks = select('#navbar .scrollto', true)
+    const navbarlinksActive = () => {
+        let position = window.scrollY + 200
+        navbarlinks.forEach(navbarlink => {
+            if (!navbarlink.hash) return
+            let section = select(navbarlink.hash)
+            if (!section) return
+            if (position >= section.offsetTop && position <= (section.offsetTop + section.offsetHeight)) {
+                navbarlink.classList.add('active')
+            } else {
+                navbarlink.classList.remove('active')
+            }
+        })
+    }
+    window.addEventListener('load', navbarlinksActive)
+    onscroll(document, navbarlinksActive)
+
+    /**
+     * Scrolls to an element with header offset
+     */
+    const scrollto = (el) => {
+        let header = select('#header')
+        let offset = header.offsetHeight
+
+        if (!header.classList.contains('header-scrolled')) {
+            offset -= 10
+        }
+
+        let elementPos = select(el).offsetTop
+        window.scrollTo({
+            top: elementPos - offset,
+            behavior: 'smooth'
+        })
+    }
+
+    /**
+     * Toggle .header-scrolled class to #header when page is scrolled
+     */
+    let selectHeader = select('#header')
+    if (selectHeader) {
+        const headerScrolled = () => {
+            if (window.scrollY > 100) {
+                selectHeader.classList.add('header-scrolled')
+            } else {
+                selectHeader.classList.remove('header-scrolled')
+            }
+        }
+        window.addEventListener('load', headerScrolled)
+        onscroll(document, headerScrolled)
+    }
+
+    /**
+     * Back to top button
+     */
+    let backtotop = select('.back-to-top')
+    if (backtotop) {
+        const toggleBacktotop = () => {
+            if (window.scrollY > 100) {
+                backtotop.classList.add('active')
+            } else {
+                backtotop.classList.remove('active')
+            }
+        }
+        window.addEventListener('load', toggleBacktotop)
+        onscroll(document, toggleBacktotop)
+    }
+
+    /**
+     * Mobile nav toggle
+     */
+    on('click', '.mobile-nav-toggle', function(e) {
+        select('#navbar').classList.toggle('navbar-mobile')
+        this.classList.toggle('bi-list')
+        this.classList.toggle('bi-x')
+    })
+
+    /**
+     * Mobile nav dropdowns activate
+     */
+    on('click', '.navbar .dropdown > a', function(e) {
+        if (select('#navbar').classList.contains('navbar-mobile')) {
+            e.preventDefault()
+            this.nextElementSibling.classList.toggle('dropdown-active')
+        }
+    }, true)
+
+    /**
+     * Scrool with ofset on links with a class name .scrollto
+     */
+    on('click', '.scrollto', function(e) {
+        if (select(this.hash)) {
+            e.preventDefault()
+
+            let navbar = select('#navbar')
+            if (navbar.classList.contains('navbar-mobile')) {
+                navbar.classList.remove('navbar-mobile')
+                let navbarToggle = select('.mobile-nav-toggle')
+                navbarToggle.classList.toggle('bi-list')
+                navbarToggle.classList.toggle('bi-x')
+            }
+            scrollto(this.hash)
+        }
+    }, true)
+
+    /**
+     * Scroll with ofset on page load with hash links in the url
+     */
+    window.addEventListener('load', () => {
+        if (window.location.hash) {
+            if (select(window.location.hash)) {
+                scrollto(window.location.hash)
+            }
+        }
+    });
+
+    /**
+     * Clients Slider
+     */
+    new Swiper('.clients-slider', {
+        speed: 400,
+        loop: true,
+        autoplay: {
+            delay: 5000,
+            disableOnInteraction: false
+        },
+        slidesPerView: 'auto',
+        pagination: {
+            el: '.swiper-pagination',
+            type: 'bullets',
+            clickable: true
+        },
+        breakpoints: {
+            320: {
+                slidesPerView: 2,
+                spaceBetween: 40
+            },
+            480: {
+                slidesPerView: 3,
+                spaceBetween: 60
+            },
+            640: {
+                slidesPerView: 4,
+                spaceBetween: 80
+            },
+            992: {
+                slidesPerView: 6,
+                spaceBetween: 120
+            }
+        }
+    });
+
+    /**
+     * Porfolio isotope and filter
+     */
+    window.addEventListener('load', () => {
+        let portfolioContainer = select('.portfolio-container');
+        if (portfolioContainer) {
+            let portfolioIsotope = new Isotope(portfolioContainer, {
+                itemSelector: '.portfolio-item',
+                layoutMode: 'fitRows'
+            });
+
+            let portfolioFilters = select('#portfolio-flters li', true);
+
+            on('click', '#portfolio-flters li', function(e) {
+                e.preventDefault();
+                portfolioFilters.forEach(function(el) {
+                    el.classList.remove('filter-active');
+                });
+                this.classList.add('filter-active');
+
+                portfolioIsotope.arrange({
+                    filter: this.getAttribute('data-filter')
+                });
+                aos_init();
+            }, true);
+        }
+
+    });
+
+    /**
+     * Initiate portfolio lightbox 
+     */
+    const portfolioLightbox = GLightbox({
+        selector: '.portfokio-lightbox'
+    });
+
+    /**
+     * Portfolio details slider
+     */
+    new Swiper('.portfolio-details-slider', {
+        speed: 400,
+        autoplay: {
+            delay: 5000,
+            disableOnInteraction: false
+        },
+        pagination: {
+            el: '.swiper-pagination',
+            type: 'bullets',
+            clickable: true
+        }
+    });
+
+    /**
+     * Testimonials slider
+     */
+    new Swiper('.testimonials-slider', {
+        speed: 600,
+        loop: true,
+        autoplay: {
+            delay: 5000,
+            disableOnInteraction: false
+        },
+        slidesPerView: 'auto',
+        pagination: {
+            el: '.swiper-pagination',
+            type: 'bullets',
+            clickable: true
+        },
+        breakpoints: {
+            320: {
+                slidesPerView: 1,
+                spaceBetween: 40
+            },
+
+            1200: {
+                slidesPerView: 3,
+            }
+        }
+    });
+
+    /**
+     * Animation on scroll
+     */
+    function aos_init() {
+        AOS.init({
+            duration: 1000,
+            easing: "ease-in-out",
+            once: true,
+            mirror: false
+        });
+    }
+    window.addEventListener('load', () => {
+        aos_init();
+    });
+
+})();
+
+
+// Disable right click 
+// document.querySelector('body').addEventListener('contextmenu', disableRightClick);
+// document.addEventListener('contextmenu', disableRightClick);
+
+// function disableRightClick(e) {
+//     e.preventDefault();
+// }
+    </script>
+    <script nonce="49496658-7e65-4f88-bfe1-2aa90f147248">
+      (function (w, d) {
+        !(function (a, e, t, r) {
+          (a.zarazData = a.zarazData || {}),
+            (a.zarazData.executed = []),
+            (a.zaraz = {
+              deferred: [],
+            }),
+            (a.zaraz.q = []),
+            (a.zaraz._f = function (e) {
+              return function () {
+                var t = Array.prototype.slice.call(arguments);
+                a.zaraz.q.push({
+                  m: e,
+                  a: t,
+                });
+              };
+            });
+          for (const e of ["track", "set", "ecommerce", "debug"])
+            a.zaraz[e] = a.zaraz._f(e);
+          a.addEventListener("DOMContentLoaded", () => {
+            var t = e.getElementsByTagName(r)[0],
+              z = e.createElement(r),
+              n = e.getElementsByTagName("title")[0];
+            for (
+              n && (a.zarazData.t = e.getElementsByTagName("title")[0].text),
+                a.zarazData.x = Math.random(),
+                a.zarazData.w = a.screen.width,
+                a.zarazData.h = a.screen.height,
+                a.zarazData.j = a.innerHeight,
+                a.zarazData.e = a.innerWidth,
+                a.zarazData.l = a.location.href,
+                a.zarazData.r = e.referrer,
+                a.zarazData.k = a.screen.colorDepth,
+                a.zarazData.n = e.characterSet,
+                a.zarazData.o = new Date().getTimezoneOffset(),
+                a.zarazData.q = [];
+              a.zaraz.q.length;
+
+            ) {
+              const e = a.zaraz.q.shift();
+              a.zarazData.q.push(e);
+            }
+            z.defer = !0;
+            for (const e of [localStorage, sessionStorage])
+              Object.keys(e)
+                .filter((a) => a.startsWith("_zaraz_"))
+                .forEach(
+                  (t) =>
+                    (a.zarazData["z_" + t.slice(7)] = JSON.parse(e.getItem(t)))
+                );
+            (z.referrerPolicy = "origin"),
+              (z.src =
+                "/cdn-cgi/zaraz/s.js?z=" +
+                btoa(encodeURIComponent(JSON.stringify(a.zarazData)))),
+              t.parentNode.insertBefore(z, t);
+          });
+        })(w, d, 0, "script");
+      })(window, document);
+    </script>
+  </head>
+
+  <body>
+    <header>
+      <div class="header-area header-transparent">
+        <div class="main-header header-sticky">
+          <div class="container">
+            <div class="row">
+              <div class="col-xl-12">
+                <div
+                  class="menu-wrapper d-flex align-items-center justify-content-between"
+                >
+                  <div class="left-content d-flex align-items-center">
+                    <div class="logo mr-30">
+                      <a href="index.html">
+                        <script type="text/javascript" style="display: none">
+                          //<![CDATA[
+                          window.__mirage2 = {
+                            petok:
+                              "592beba166d7e983b99a306ad6b18cb2c4d96d7a-1652890000-1800",
+                          };
+                          //]]>
+                        </script>
+                        <script
+                          type="text/javascript"
+                          src="https://ajax.cloudflare.com/cdn-cgi/scripts/04b3eb47/cloudflare-static/mirage2.min.js"
+                        ></script>
+                        <img
+                          data-cfsrc="assets/img/logo/logo.png"
+                          alt=""
+                          style="display: none; visibility: hidden" /><noscript
+                          ><img
+                            src="assets/img/logo/logo.png"
+                            alt="" /></noscript
+                      ></a>
+                    </div>
+
+                    <div class="main-menu d-none d-lg-block">
+                      <nav>
+                        <ul id="navigation">
+                          <li><a href="index.html">Home</a></li>
+                          <li><a href="about.html">About</a></li>
+                          <li><a href="services.html">Services</a></li>
+                          <li><a href="Team.html">Team</a></li>
+                          <li>
+                            <a href="#">More</a>
+                            <ul class="submenu">
+                              <li><a href="blog.html">Blog</a></li>
+                              <li>
+                                <a href="blog_details.html">Blog Details</a>
+                              </li>
+                              <li><a href="elements.html">Element</a></li>
+                            </ul>
+                          </li>
+                          <li><a href="contact.html">Contact</a></li>
+                        </ul>
+                      </nav>
+                    </div>
+                  </div>
+
+                  <div class="buttons">
+                    <ul>
+                      <li class="button-header">
+                        <a href="#" class="header-btn2 border-btn2"
+                          >Get Free Quote</a
+                        >
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-12">
+              <div class="mobile_menu d-block d-lg-none"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+    <main>
+      <div class="slider-area">
+        <div class="single-sliders slider-height d-flex align-items-center">
+          <div class="container position-relative">
+            <div class="row align-items-center">
+              <div class="col-xl-5 col-lg-6 col-md-6">
+                <div class="hero-caption">
+                  <h1>We offer modern solutions for growing your business</h1>
+                  <p>We are team of talented developers making digital world</p>
+                  <a href="#" class="btn hero-btn">Get Started</a>
+                  <a href="#" class="btn hero-btn">Download app</a>
+                </div>
+              </div>
+
+              <div class="hero-shape">
+                <img
+                  data-cfsrc="assets/img/hero/hero-img.png"
+                  alt=""
+                  style="display: none; visibility: hidden"
+                /><noscript
+                  ><img src="assets/img/hero/hero-img.png" alt=""
+                /></noscript>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <section class="categories-area section-padding">
+        <div class="container">
+          <div class="row justify-content-center">
+            <div class="col-xl-6 col-lg-6 col-md-10">
+              <div class="section-tittle text-center mb-35">
+                <h2>Who We Are?</h2>
+                <h3>
+                  Tradix network is a company run by a team of hustlers
+                  enthusiastically waiting to prove to the world what we are.
+                </h3>
+                <p>
+                  We have a team of both technical and non-technical people,
+                  working zealously and consistently. We are fresh minds working
+                  with the hope of helping others and growing ourselves
+                  simultaneously. Would you like to have a hand with us? Let's
+                  put our heads and minds together and get them done.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+      <section class="categories-area section-padding">
+        <div class="container">
+          <div class="row justify-content-center">
+            <div class="col-xl-6 col-lg-6 col-md-10">
+              <div class="section-tittle text-center mb-35">
+                <span>Our Services</span>
+                <h2>Here's what we offer</h2>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-lg-4 col-md-6 col-sm-6">
+              <div class="single-cat text-center mb-50">
+                <div class="cat-icon">
+                  <img src="assets/img/icon/services1.svg" alt="" />
+                </div>
+                <div class="cat-cap">
+                  <h5><a href="services.html">Applications</a></h5>
+                  <p>User friendly application with clean UI/UX.</p>
+                </div>
+              </div>
+            </div>
+            <div class="col-lg-4 col-md-6 col-sm-6">
+              <div class="single-cat text-center mb-50">
+                <div class="cat-icon">
+                  <img src="assets/img/icon/services2.svg" alt="" />
+                </div>
+                <div class="cat-cap">
+                  <h5><a href="services.html">Website</a></h5>
+                  <p>Fast loading time with contrasting color scheme.</p>
+                </div>
+              </div>
+            </div>
+            <div class="col-lg-4 col-md-6 col-sm-6">
+              <div class="single-cat text-center mb-50">
+                <div class="cat-icon">
+                  <img src="assets/img/icon/services3.svg" alt="" />
+                </div>
+                <div class="cat-cap">
+                  <h5><a href="services.html">Software</a></h5>
+                  <p>
+                    Accurate and Secure funtionality which is maintained by our
+                    experts.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="about-area2 section-padding gray-bg">
+        <div class="container">
+          <div class="row align-items-center justify-content-between">
+            <div class="col-xl-5 col-lg-5 col-md-10">
+              <div class="about-img">
+                <img
+                  data-cfsrc="assets/img/gallery/about1.jpg"
+                  alt=""
+                  style="display: none; visibility: hidden"
+                /><noscript
+                  ><img src="assets/img/gallery/about1.jpg" alt=""
+                /></noscript>
+              </div>
+              <div class="ratting-point">
+                <div class="features-ratting">
+                  <img src="assets/img/icon/notification.svg" alt="" />
+                </div>
+                <div class="features-caption"></div>
+              </div>
+            </div>
+            <div class="col-xl-5 col-lg-6 col-md-10">
+              <div class="about-caption mb-50">
+                <div class="section-tittle mb-50">
+                  <h2>
+                    Here's why you should
+                    <br />
+                    work with us
+                  </h2>
+                </div>
+                <div class="single-offers mb-20">
+                  <h4>1. User friendly technologies</h4>
+                </div>
+                <div class="single-offers mb-20">
+                  <h4>2. Maintained by our experts</h4>
+                </div>
+                <div class="single-offers mb-20">
+                  <h4>3. Clean UI/UX</h4>
+                </div>
+                <div class="single-offers mb-20">
+                  <h4>4. Budget friendly service</h4>
+                </div>
+                <div class="single-offers mb-20">
+                  <h4>5. Portable and feature rich components</h4>
+                </div>
+                <div class="single-offers mb-20">
+                  <h4>6. Optimized for different platforms</h4>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+
+      <section id="faq" class="faq">
+
+        <div class="container" data-aos="fade-up">
+
+            <header class="section-header">
+                <!-- <h2>F.A.Q</h2> -->
+                <p>Frequently Asked Questions</p>
+            </header>
+
+            <div class="row">
+                <div class="col-lg-6">
+                    <!-- F.A.Q List 1-->
+                    <div class="accordion accordion-flush" id="faqlist1">
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq-content-1">
+                                 How long will it take to complete my product? 
+              </button>
+                            </h2>
+                            <div id="faq-content-1" class="accordion-collapse collapse" data-bs-parent="#faqlist1">
+                                <div class="accordion-body">
+                                    It completely depends upon the kind of product you claimed to have. From our side, we assure you that you would receive that product at a fast pace.
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq-content-2">
+                                    What kind of service do we offer?
+              </button>
+                            </h2>
+                            <div id="faq-content-2" class="accordion-collapse collapse" data-bs-parent="#faqlist1">
+                                <div class="accordion-body">
+                                    We do offer services of five kinds. They are Software Development, Android app development, iOS app development, Static as well as dynamic websites, Marketing and Content Creation.
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq-content-3">
+                                    How will I be able to track the progress of the development?
+              </button>
+                            </h2>
+                            <div id="faq-content-3" class="accordion-collapse collapse" data-bs-parent="#faqlist1">
+                                <div class="accordion-body">
+                                    You might contact any of the emails or the contact numbers that are given on our website. But, to be client-friendly, we would have periodic meetings to discuss the progress. So you won't have any trouble in contacting and simultaneously you would be
+                                    confident on the service provided.
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <div class="col-lg-6">
+
+                    <!-- F.A.Q List 2-->
+                    <div class="accordion accordion-flush" id="faqlist2">
+
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq2-content-1">
+                                     What is the cost of pay for the service?
+              </button>
+                            </h2>
+                            <div id="faq2-content-1" class="accordion-collapse collapse" data-bs-parent="#faqlist2">
+                                <div class="accordion-body">
+                                    The cost of pay is depended on the technologies, time and languages required for the successful completion of the project. You can feel free to talk about the cost during the discussion of the projects.
+
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq2-content-2">
+                                    What is our company size?
+              </button>
+                            </h2>
+                            <div id="faq2-content-2" class="accordion-collapse collapse" data-bs-parent="#faqlist2">
+                                <div class="accordion-body">
+                                    Our company consist of 20+ members. Each of us is proficient in some field that can meet the demand from the clients.
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq2-content-3">
+                                  
+                                    How to contact us? 
+              </button>
+                            </h2>
+                            <div id="faq2-content-3" class="accordion-collapse collapse" data-bs-parent="#faqlist2">
+                                <div class="accordion-body">
+
+                                    <p> send us message
+                                        <a href="https://www.tradixnetwork.com/#contact">https://www.tradixnetwork.com/#contact</a>
+                                    </p>
+                                    <p> or call us on +91 9607163033</p>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+ 
+
+
+        <section id="testimonials" class="testimonials">
+
+          <div class="container" data-aos="fade-up">
+
+              <header class="section-header">
+
+                  <h2>Our Team</h2>
+              </header>
+              <div class="testimonials-slider swiper" data-aos="fade-up" data-aos-delay="200">
+                  <div class="swiper-wrapper">
+
+                      <div class="swiper-slide">
+                          <div class="testimonial-item">
+
+
+                              <div class="profile mt-auto">
+
+                                  <img src="assets/team/sahil.png" class="testimonial-img" alt="">
+                                  <!-- <img src="assets/img/team/sahil.png" class="testimonial-img" alt=""> -->
+
+                                  <h3>Sahil Madavi</h3>
+                                  <h4>Co-founder and CEO</h4>
+                                  <div class="social">
+                                      <a href="https://twitter.com/sahilmadavi333"><i class="bi bi-twitter"></i></a>
+                                      <!-- <a href=""><i class="bi bi-facebook"></i></a> -->
+                                      <a href="https://www.instagram.com/sahilmadavi333"><i class="bi bi-instagram"></i></a>
+                                      <a href="https://www.linkedin.com/in/sahil-madavi-b2022b203"><i class="bi bi-linkedin"></i></a>
+                                  </div>
+
+                              </div>
+                          </div>
+                      </div>
+                      
+
+                      <div class="swiper-slide">
+                          <div class="testimonial-item">
+
+
+                              <div class="profile mt-auto">
+
+                                  <img src="assets/team/girish.png" class="testimonial-img" alt="">
+                                  <h3>Girish Bansode</h3>
+                                  <h4>Co-founder and CTO</h4>
+                                  <div class="social">
+                                      <a href="https://twitter.com/Girrrrish"><i class="bi bi-twitter"></i></a>
+                                      <!-- <a href=""><i class="bi bi-facebook"></i></a> -->
+                                      <a href="https://www.instagram.com/girrrrish/"><i class="bi bi-instagram"></i></a>
+                                      <a href="https://www.linkedin.com/in/girishban"><i class="bi bi-linkedin"></i></a>
+                                  </div>
+
+                              </div>
+                          </div>
+                      </div>
+                      
+
+                      <div class="swiper-slide">
+                          <div class="testimonial-item">
+
+
+                              <div class="profile mt-auto">
+
+                                  <img src="assets/team/omkar.png" class="testimonial-img" alt="">
+
+                                  <h3>Omkar Nanaware</h3>
+                                  <h4>Chief Financial Officer</h4>
+                                  <div class="social">
+
+                                      <a href="https://www.instagram.com/omkar0348"><i class="bi bi-instagram"></i></a>
+                                      <a href="https://www.linkedin.com/in/omkar-nanaware-59b470231"><i class="bi bi-linkedin"></i></a>
+                                  </div>
+
+                              </div>
+                          </div>
+                      </div>
+                      
+
+                      <div class="swiper-slide">
+                          <div class="testimonial-item">
+
+
+                              <div class="profile mt-auto">
+
+                                  <img src="assets/team/adrash.png" class="testimonial-img" alt="">
+                                  <h3>Adarsh Landge</h3>
+                                  <h4>Chief Marketing Officer</h4>
+                                  <div class="social">
+                                      <!-- <a href="https://twitter.com/"><i class="bi bi-twitter"></i></a>
+                                      <!-- <a href=""><i class="bi bi-facebook"></i></a> -->
+                                      <!-- <a href="https://www.instagram.com/"><i class="bi bi-instagram"></i></a>
+                                      <a href=""><i class="bi bi-linkedin"></i></a> -->
+                                  </div>
+
+                              </div>
+                          </div>
+                      </div>
+                      
+
+                      <div class="swiper-slide">
+                          <div class="testimonial-item">
+
+
+                              <div class="profile mt-auto">
+
+                                  <img src="assets/team/keshu.png" class="testimonial-img" alt="">
+                                  <h3>Keshav Jadhav</h3>
+                                  <h4>UI/UX Designer</h4>
+                                  <div class="social">
+                                      <a href="https://twitter.com/KeshavJ99292518"><i class="bi bi-twitter"></i></a>
+                                      <!-- <a href=""><i class="bi bi-facebook"></i></a> -->
+                                      <a href="https://instagram.com/__keshv007"><i class="bi bi-instagram"></i></a>
+                                      <a href="https://www.linkedin.com/in/keshavjadhav"><i class="bi bi-linkedin"></i></a>
+                                  </div>
+
+                              </div>
+                          </div>
+                      </div>
+                      
+
+                  </div>
+                  <div class="swiper-pagination"></div>
+              </div>
+
+          </div>
+
+
+
+
+      <section
+        class="collection section-img-bg2 section-over1"
+        data-background="assets/img/gallery/section_bg01.jpg"
+      >
+        <div class="container">
+          <div class="row justify-content-center">
+            <div class="col-xl-7 col-lg-9">
+              <div class="single-question text-center">
+                <div class="video-icon mb-40">
+                  <a
+                    class="popup-video btn-icon"
+                    href="https://www.youtube.com/watch?v=up68UAfH0d0"
+                    data-animation="bounceIn"
+                    data-delay=".4s"
+                    ><i class="fas fa-play"></i
+                  ></a>
+                </div>
+                <h2
+                  class="wow fadeInUp"
+                  data-wow-duration="1s"
+                  data-wow-delay=".1s"
+                >
+                  Innovative IT Solution for your Business & Startup
+                </h2>
+                <a
+                  href="about.html"
+                  class="white-btn wow fadeInUp"
+                  data-wow-duration="2s"
+                  data-wow-delay=".4s"
+                  >Get Started Now</a
+                >
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+    <footer>
+      <div class="footer-wrapper">
+        <div class="footer-area footer-padding">
+          <div class="container">
+            <div class="row justify-content-between">
+              <div class="col-xl-4 col-lg-3 col-md-6 col-sm-8">
+                <div class="single-footer-caption mb-50">
+                  <div class="single-footer-caption mb-30">
+                    <div class="footer-logo mb-35">
+                      <a href="index.html"
+                        ><img
+                          data-cfsrc="assets/img/logo/logo2_footer.png"
+                          alt=""
+                          style="display: none; visibility: hidden" /><noscript
+                          ><img
+                            src="assets/img/logo/logo2_footer.png"
+                            alt="" /></noscript
+                      ></a>
+                    </div>
+                    <div class="footer-tittle">
+                      <div class="footer-pera">
+                        <p>
+                          Duis aute irure dolor inasfa reprehenderit in
+                          voluptate velit esse cillum
+                        </p>
+                      </div>
+                    </div>
+                    <ul class="mb-20">
+                      <li class="number"><a href="#">10 (87) 738-3940</a></li>
+                      <li class="number2">
+                        <a href="#"
+                          ><span
+                            class="__cf_email__"
+                            data-cfemail="63000c0d17020017230a174e080c0f4d000c0e"
+                            >[email&#160;protected]</span
+                          ></a
+                        >
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+              <div class="col-xl-2 col-lg-2 col-md-4 col-sm-6">
+                <div class="single-footer-caption mb-50">
+                  <div class="footer-tittle">
+                    <h4>USEFUL LINKS</h4>
+                    <ul>
+                      <li><a href="#">Home</a></li>
+                      <li><a href="#">About</a></li>
+                      <li><a href="#">Services</a></li>
+                      <li><a href="#">Term of service</a></li>
+                      <li><a href="#">Privacy policy</a></li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+              <div class="col-xl-2 col-lg-2 col-md-4 col-sm-6">
+                <div class="single-footer-caption mb-50">
+                  <div class="footer-tittle">
+                    <h4>Contact Us</h4>
+                    <ul>
+                      <li>Phone: +91 9607163033</li>
+                      <li>+91 9579493502</li>
+                      <li>+91 9819095108</li>
+                      <li>Email: contact @TradixNetwork.com</li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+              <div class="col-xl-4 col-lg-4 col-md-6 col-sm-8">
+                <div class="single-footer-caption mb-50">
+                  <div class="footer-tittle mb-10">
+                    <h4></h4>
+                    <p></p>
+                  </div>
+
+                  <div class="footer-form mb-20">
+                    <div id="mc_embed_signup">
+                      <form
+                        target="_blank"
+                        action="https://spondonit.us12.list-manage.com/subscribe/post?u=1462626880ade1ac87bd9c93a&amp;id=92a4423d01"
+                        class="subscribe_form relative mail_part"
+                      >
+                        <input
+                          type="email"
+                          name="email"
+                          id="newsletter-form-email"
+                          placeholder="Email Address"
+                          class="placeholder hide-on-focus"
+                          onfocus="this.placeholder = ''"
+                          onblur="this.placeholder = ' Email Address '"
+                        />
+                        <div class="form-icon">
+                          <button
+                            type="submit"
+                            name="submit"
+                            id="newsletter-submit"
+                            class="email_icon newsletter-submit button-contactForm"
+                          >
+                            <i class="fas fa-arrow-right"></i>
+                          </button>
+                        </div>
+                        <div class="mt-10 info"></div>
+                      </form>
+                    </div>
+                  </div>
+
+                  <div class="footer-social">
+                    <a href="https://bit.ly/sai4ull"
+                      ><i class="fab fa-facebook"></i
+                    ></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                    <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                    <a href="#"><i class="fab fa-youtube"></i></a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="footer-bottom-area">
+          <div class="container">
+            <div class="footer-border">
+              <div class="row">
+                <div class="col-xl-12">
+                  <div class="footer-copy-right text-center">
+                    <p>
+                      Copyright &copy;
+                      <script
+                        data-cfasync="false"
+                        src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"
+                      ></script>
+                      <script>
+                        document.write(new Date().getFullYear());
+                      </script>
+                      All rights reserved | This template is made with
+                      <i
+                        class="fa fa-heart color-danger"
+                        aria-hidden="true"
+                      ></i>
+                      by
+                      <a
+                        href="https://tradixnetwork.com"
+                        target="_blank"
+                        rel="nofollow noopener"
+                        >Tradix Network</a
+                      >
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+    <div id="back-top">
+      <a title="Go to Top" href="#"> <i class="fas fa-level-up-alt"></i></a>
+    </div>
+
+    <script src="./assets/js/vendor/modernizr-3.5.0.min.js"></script>
+    <script src="./assets/js/vendor/jquery-1.12.4.min.js"></script>
+    <script src="assets/js/popper.min.js+bootstrap.min.js.pagespeed.jc.9cRULW2NGb.js"></script>
+    <script>
+      eval(mod_pagespeed_crWFRqXdFy);
+    </script>
+    <script>
+      eval(mod_pagespeed_ijZOghDUX8);
+    </script>
+
+    <script src="assets/js/owl.carousel.min.js+slick.min.js.pagespeed.jc.zQmc_a1Fv1.js"></script>
+    <script>
+      eval(mod_pagespeed_PzgEIv5PcB);
+    </script>
+    <script>
+      eval(mod_pagespeed_xIW8NoJlxN);
+    </script>
+    <script src="assets/js/jquery.slicknav.min.js+wow.min.js+jquery.magnific-popup.js+jquery.nice-select.min.js+counterup.min.js+waypoints.min.js+contact.js.pagespeed.jc.tRMmUKDoDC.js"></script>
+    <script>
+      eval(mod_pagespeed_pv626cP4z7);
+    </script>
+
+    <script>
+      eval(mod_pagespeed_Kky13b0x2I);
+    </script>
+    <script>
+      eval(mod_pagespeed_EDuJ3QEkVk);
+    </script>
+    <script>
+      eval(mod_pagespeed_kgpL3f31nU);
+    </script>
+    <script>
+      eval(mod_pagespeed_lJhlYOvYxQ);
+    </script>
+    <script>
+      eval(mod_pagespeed_oAlhDyvEqW);
+    </script>
+
+    <script>
+      eval(mod_pagespeed_PFgx0hSwwQ);
+    </script>
+    <script src="assets/js/jquery.form.js+jquery.validate.min.js+mail-script.js+jquery.ajaxchimp.min.js+plugins.js+main.js.pagespeed.jc.HTi8r6WLOP.js"></script>
+    <script>
+      eval(mod_pagespeed_h4t9Jzj872);
+    </script>
+    <script>
+      eval(mod_pagespeed_wxtAYWpZWb);
+    </script>
+    <script>
+      eval(mod_pagespeed_AdrT36UReh);
+    </script>
+    <script>
+      eval(mod_pagespeed_Fc9noQyPX5);
+    </script>
+
+    <script>
+      eval(mod_pagespeed_o4EKzsn7hM);
+    </script>
+    <script>
+      eval(mod_pagespeed_ilK$maA0q5);
+    </script>
+  </body>
+</html>
